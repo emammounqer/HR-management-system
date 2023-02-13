@@ -1,3 +1,8 @@
+img {
+    width: 100%;
+    height: auto;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -34,10 +39,35 @@ nav a {
     text-decoration: none;
 }
 
+/* main */
 main {
     flex-grow: 1;
     padding: 2em;
 }
+
+/* card */
+.card {
+    background: red;
+    width: 15em;
+    min-height: 20em;
+    padding: 1em;
+    border-radius: 1em;
+
+    font-size: .75rem;
+}
+
+.card__img {
+    width: 15em;
+    height: 15em;
+    object-fit: cover;
+}
+
+.card__data {
+    margin: 0;
+    color: white;
+    text-align: center;
+}
+
 
 /* footer */
 footer {
