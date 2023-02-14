@@ -2,20 +2,23 @@
 
 // ----------- Employee Object Definition -----------
 const DEPARTMENTS = {
-    Administration: 'Administration',
-    Marketing: 'Marketing',
-    Development: 'Development',
-    Finance: 'Finance'
+    administration: 'Administration',
+    marketing: 'Marketing',
+    development: 'Development',
+    finance: 'Finance'
 }
 
 const LEVELS = {
-    Junior: 'Junior',
-    MidSenior: 'Mid-Senior',
-    Senior: 'Senior'
+    junior: 'Junior',
+    midSenior: 'Mid-Senior',
+    senior: 'Senior'
 }
 
-function Employee(id, fullName, department, level, imgUrl, salary) {
-    if (Employee.prototype._employeesIds.includes(id)) throw `id : ${id} is already exist`
+function Employee(fullName, department, level, imgUrl, salary) {
+    const allIds = Employee.prototype._employeesIds
+    let id = (allIds[allIds.length - 1] || 1000) + 1
+
+    if (allIds.includes(id)) throw `id : ${id} is already exist`
     if (!Object.values(DEPARTMENTS).includes(department)) throw `department :${department} is not valid`
     if (!Object.values(LEVELS).includes(level)) throw `level :${level} is not valid`
 
@@ -23,50 +26,77 @@ function Employee(id, fullName, department, level, imgUrl, salary) {
     this.fullName = fullName;
     this.department = department;
     this.level = level;
-    this.imgUrl = imgUrl;
+    this.imgUrl = imgUrl || './assets/avatar.png';
     if (salary) {
         this.salary = salary;
         this.netSalary = salary - salary * .075
     } else this.calculateSalary();
 
-    Employee.prototype._employeesIds.push(id)
+    allIds.push(id)
 }
 
 Employee.prototype._employeesIds = []
 Employee.prototype.calculateSalary = function () {
     switch (this.level) {
-        case LEVELS.Junior:
+        case LEVELS.junior:
             this.salary = getRandomNumBetween(500, 1000)
             break;
-        case LEVELS.MidSenior:
+        case LEVELS.midSenior:
             this.salary = getRandomNumBetween(1000, 1500)
             break;
-        case LEVELS.Senior:
+        case LEVELS.senior:
             this.salary = getRandomNumBetween(1500, 2000)
         default:
             break;
     }
     this.netSalary = this.salary - this.salary * 0.075
 }
-Employee.prototype.render = function () {
-    document.write(`${this.fullName} | ${this.netSalary} <br/>`)
+Employee.prototype.render = function (parentElem) {
+    const cardDiv = document.createElement('div')
+    parentElem.append(cardDiv);
+    cardDiv.classList.add('card')
+
+    const imgElem = document.createElement('img')
+    cardDiv.append(imgElem)
+    imgElem.setAttribute('src', this.imgUrl)
+    imgElem.classList.add('card__img')
+
+    const pElem = document.createElement('p')
+    cardDiv.append(pElem)
+    pElem.textContent = `Name: ${this.fullName} - ID: ${this.id} - Department: ${this.department} - Level: ${this.level} - ${this.netSalary}`
+    pElem.classList.add('card__data')
 }
 
-// ----------- instantiate the employees object -----------
-const employees = [
-    new Employee(1000, 'Ghazi Samer', DEPARTMENTS.Administration, LEVELS.Senior, getRandomImgUrl()),
-    new Employee(1001, 'Lana Ali', DEPARTMENTS.Finance, LEVELS.Senior, getRandomImgUrl()),
-    new Employee(1002, 'Tamara Ayoub', DEPARTMENTS.Marketing, LEVELS.Senior, getRandomImgUrl()),
-    new Employee(1003, 'Safi Walid', DEPARTMENTS.Administration, LEVELS.MidSenior, getRandomImgUrl()),
-    new Employee(1004, 'Omar Zaid', DEPARTMENTS.Development, LEVELS.Senior, getRandomImgUrl()),
-    new Employee(1005, 'Rana Saleh', DEPARTMENTS.Development, LEVELS.Junior, getRandomImgUrl()),
-    new Employee(1006, 'Hadi Ahmad', DEPARTMENTS.Finance, LEVELS.MidSenior, getRandomImgUrl()),
-]
+// State
+const allEmployees = []
 
-// ----------- render the employee -----------
-document.write(`<b>Full Name | Salary </b> <br/>`)
-for (let i = 0; i < employees.length; i++) {
-    employees[i].render();
+// Selector
+const form = document.getElementById('add-employee')
+const departmentSections = {
+    administration: document.getElementById('administration-employee'),
+    marketing: document.getElementById('marketing-employee'),
+    development: document.getElementById('development-employee'),
+    finance: document.getElementById('finance-employee')
+}
+
+// Event
+form.addEventListener('submit', addEmployeeFormHandler)
+
+// functions
+function addEmployeeFormHandler(e) {
+    e.preventDefault();
+
+    const name = e.target.name.value
+    const department = e.target.department.value
+    const level = e.target.level.value
+    const imgUrl = e.target.imgUrl.value
+
+    const employee = new Employee(name, DEPARTMENTS[department], LEVELS[level], imgUrl)
+
+    employee.render(departmentSections[department]);
+    allEmployees.push(employee)
+
+    e.target.reset();
 }
 
 // ----------- util functions -----------
@@ -78,5 +108,5 @@ function getRandomNumBetween(num1, num2) {
 }
 
 function getRandomImgUrl() {
-    return 'https://source.unsplash.com/random/300×300'
+    return 'https://source.unsplash.com/random/300x300'
 }

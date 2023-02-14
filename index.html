@@ -19,14 +19,59 @@
         </nav>
     </header>
     <main>
-        <h1>Employee Information</h1>
-        <!-- we put the script in main Just for lab 07 until we take append -->
-        <script src="./app.js"></script>
+        <form id="add-employee">
+            <h2>Add Employee</h2>
 
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" required>
+
+            <label for="department">Department</label>
+            <Select name="department" id="department">
+                <option value="administration">Administration</option>
+                <option value="marketing">Marketing</option>
+                <option value="development">Development</option>
+                <option value="finance">Finance</option>
+            </Select>
+
+            <label for="level">Level</label>
+            <Select name="level" id="level">
+                <option value="junior">Junior</option>
+                <option value="midSenior">Mid-Senior</option>
+                <option value="senior">Senior</option>
+            </Select>
+
+            <label for="imgUrl">Image url</label>
+            <input type="text" name="imgUrl">
+
+            <input type="submit" value="Add Employee">
+
+        </form>
+
+        <section id="employees">
+            <h1>DEPARTMENTS</h1>
+            <section id="administration" class="department">
+                <h2>Administration</h2>
+                <div id="administration-employee" class="department-employee"></div>
+            </section>
+            <section id="marketing" class="department">
+                <h2>Marketing</h2>
+                <div id="marketing-employee" class="department-employee"></div>
+            </section>
+            <section id="development" class="department">
+                <h2>Development</h2>
+                <div id="development-employee" class="department-employee"></div>
+            </section>
+            <section id="finance" class="department">
+                <h2>Finance</h2>
+                <div id="finance-employee" class="department-employee"></div>
+            </section>
+        </section>
     </main>
     <footer>
         <span><span class="icon">&copy;</span> This website done by Emam Mounqer as project for ASAC prep</span>
     </footer>
+
+    <script src="./app.js"></script>
 </body>
 
 </html>
