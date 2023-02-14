@@ -26,7 +26,7 @@ function Employee(fullName, department, level, imgUrl, salary) {
     this.fullName = fullName;
     this.department = department;
     this.level = level;
-    this.imgUrl = imgUrl || './assets/avatar.svg';
+    this.imgUrl = imgUrl || './assets/avatar.png';
     if (salary) {
         this.salary = salary;
         this.netSalary = salary - salary * .075
@@ -72,11 +72,11 @@ const allEmployees = []
 
 // Selector
 const form = document.getElementById('add-employee')
-const employeesSections = {
-    administration: document.getElementById('administration'),
-    marketing: document.getElementById('marketing'),
-    development: document.getElementById('development'),
-    finance: document.getElementById('finance')
+const departmentSections = {
+    administration: document.getElementById('administration-employee'),
+    marketing: document.getElementById('marketing-employee'),
+    development: document.getElementById('development-employee'),
+    finance: document.getElementById('finance-employee')
 }
 
 // Event
@@ -93,7 +93,7 @@ function addEmployeeFormHandler(e) {
 
     const employee = new Employee(name, DEPARTMENTS[department], LEVELS[level], imgUrl)
 
-    employee.render(employeesSections[department]);
+    employee.render(departmentSections[department]);
     allEmployees.push(employee)
 
     e.target.reset();
