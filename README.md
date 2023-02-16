@@ -10,3 +10,8 @@
 
 - create form to add employee
 - create html empolyee card in JS and append to its section in home page
+
+## lab 09
+
+- make the employee data saved in local storage
+- create accounting script to show the data of each department

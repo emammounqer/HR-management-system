@@ -15,7 +15,7 @@ const LEVELS = {
 }
 
 function Employee(fullName, department, level, imgUrl, salary) {
-    const allIds = Employee.prototype._employeesIds
+    const allIds = Employee._employeesIds
     let id = (allIds[allIds.length - 1] || 1000) + 1
 
     if (allIds.includes(id)) throw `id : ${id} is already exist`
@@ -35,7 +35,7 @@ function Employee(fullName, department, level, imgUrl, salary) {
     allIds.push(id)
 }
 
-Employee.prototype._employeesIds = []
+Employee._employeesIds = []
 Employee.prototype.calculateSalary = function () {
     switch (this.level) {
         case LEVELS.junior:
@@ -51,36 +51,50 @@ Employee.prototype.calculateSalary = function () {
     }
     this.netSalary = this.salary - this.salary * 0.075
 }
-Employee.prototype.render = function (parentElem) {
+
+
+// State
+const allEmployees = getEmployeesFromLocalStorage()
+
+// Selector
+const form = document.getElementById('add-employee')
+const departmentSections = {
+    Administration: document.getElementById('administration-employee'),
+    Marketing: document.getElementById('marketing-employee'),
+    Development: document.getElementById('development-employee'),
+    Finance: document.getElementById('finance-employee')
+}
+
+// init 
+renderCards(allEmployees)
+
+// Events
+form.addEventListener('submit', addEmployeeFormHandler)
+
+// render functions
+function renderCard(employee) {
     const cardDiv = document.createElement('div')
+    const parentElem = departmentSections[employee.department]
     parentElem.append(cardDiv);
     cardDiv.classList.add('card')
 
     const imgElem = document.createElement('img')
     cardDiv.append(imgElem)
-    imgElem.setAttribute('src', this.imgUrl)
+    imgElem.setAttribute('src', employee.imgUrl)
     imgElem.classList.add('card__img')
 
     const pElem = document.createElement('p')
     cardDiv.append(pElem)
-    pElem.textContent = `Name: ${this.fullName} - ID: ${this.id} - Department: ${this.department} - Level: ${this.level} - ${this.netSalary}`
+    pElem.textContent = `Name: ${employee.fullName} - ID: ${employee.id} - Department: ${employee.department} - Level: ${employee.level} - ${employee.netSalary}`
     pElem.classList.add('card__data')
 }
 
-// State
-const allEmployees = []
-
-// Selector
-const form = document.getElementById('add-employee')
-const departmentSections = {
-    administration: document.getElementById('administration-employee'),
-    marketing: document.getElementById('marketing-employee'),
-    development: document.getElementById('development-employee'),
-    finance: document.getElementById('finance-employee')
+function renderCards(employees) {
+    for (let i = 0; i < employees.length; i++) {
+        const employee = employees[i];
+        renderCard(employee)
+    }
 }
-
-// Event
-form.addEventListener('submit', addEmployeeFormHandler)
 
 // functions
 function addEmployeeFormHandler(e) {
@@ -93,12 +107,29 @@ function addEmployeeFormHandler(e) {
 
     const employee = new Employee(name, DEPARTMENTS[department], LEVELS[level], imgUrl)
 
-    employee.render(departmentSections[department]);
     allEmployees.push(employee)
+    setEmployeesInLocalStorage()
+
+    renderCard(employee)
 
     e.target.reset();
 }
 
+function setEmployeesInLocalStorage() {
+    const jsonData = JSON.stringify(allEmployees);
+    localStorage.setItem('employees', jsonData)
+}
+
+function getEmployeesFromLocalStorage() {
+    try {
+        const jsonData = localStorage.getItem('employees');
+        const data = JSON.parse(jsonData);
+        if (!Array.isArray(data)) return []
+        return data;
+    } catch (error) {
+        return []
+    }
+}
 // ----------- util functions -----------
 function getRandomNumBetween(num1, num2) {
     let min = num1;
@@ -107,6 +138,3 @@ function getRandomNumBetween(num1, num2) {
     return Math.floor(min + Math.random() * (max - min + 1))
 }
 
-function getRandomImgUrl() {
-    return 'https://source.unsplash.com/random/300x300'
-}

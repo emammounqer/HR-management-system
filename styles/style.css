@@ -167,3 +167,25 @@ footer .icon {
     font-size: 1.5rem;
     padding-inline-end: .4rem;
 }
+
+/* table */
+#accounting-table {
+    margin: auto;
+    width: 70%;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+#accounting-table th {
+    background-color: var(--primary);
+}
+
+#accounting-table td,
+#accounting-table th {
+    padding: .5em;
+    border: 1px solid var(--neutral)
+}
+
+#accounting-table tr:last-child {
+    background-color: var(--neutral);
+}
