@@ -170,7 +170,7 @@ footer .icon {
 
 /* table */
 #accounting-table {
-    margin: auto;
+    margin: 1em auto;
     width: 70%;
     text-align: center;
     border-collapse: collapse;
@@ -186,6 +186,6 @@ footer .icon {
     border: 1px solid var(--neutral)
 }
 
-#accounting-table tr:last-child {
+#accounting-table tfoot {
     background-color: var(--neutral);
 }

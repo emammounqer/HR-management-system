@@ -1,102 +1,75 @@
 // State
 const allEmployees = getEmployeesFromLocalStorage()
-const employeesByDepartment = separateEmployeeByDepartment();
+const allDepartmentData = initializeAllDepartment();
+const total = {
+    name: 'Total',
+    numOfEmployee: 0,
+    totalSalary: 0,
+    avgSalary: 0
+}
 
 // Selector
 const table = document.getElementById('accounting-table')
+const tableBody = table.querySelector('tbody')
+const tableFooter = table.querySelector('tfoot')
 
 // init 
+updateAllDepartmentData();
 renderTable();
+
 
 // render functions
 function renderTable() {
-    const allDepartmentData = getAllDepartmentData();
-    console.log(allDepartmentData);
-    for (let i = 0; i < allDepartmentData.length; i++) {
-        const rowEl = createDepartmentRow(allDepartmentData[i])
-        table.append(rowEl)
+    for (const dep of Object.values(allDepartmentData)) {
+        const rowEl = createTableRow(dep)
+        tableBody.append(rowEl)
     }
+
+    // footer
+    tableFooter.append(createTableRow(total))
 }
 
-function createDepartmentRow(departmentData) {
+function createTableRow(rowData) {
     const trEl = document.createElement('tr');
 
     const departmentNameTD = document.createElement('td')
     trEl.append(departmentNameTD);
-    departmentNameTD.textContent = departmentData.departmentName;
+    departmentNameTD.textContent = rowData.name;
 
     const numOfEmployeeTD = document.createElement('td')
     trEl.append(numOfEmployeeTD);
-    numOfEmployeeTD.textContent = departmentData.numOfEmployee;
+    numOfEmployeeTD.textContent = rowData.numOfEmployee;
 
     const totalSalaryTD = document.createElement('td')
     trEl.append(totalSalaryTD)
-    totalSalaryTD.textContent = departmentData.totalSalary;
+    totalSalaryTD.textContent = Math.round(rowData.totalSalary);
 
     const avgSalaryTD = document.createElement('td')
     trEl.append(avgSalaryTD)
-    avgSalaryTD.textContent = departmentData.avgSalary;
+    avgSalaryTD.textContent = Math.round(rowData.avgSalary);
 
     return trEl
 }
 
 // functions
-function getDepartmentData(departmentName) {
-    const employees = employeesByDepartment[departmentName]
-    let totalSalary = 0;
-    for (let i = 0; i < employees.length; i++) {
-        totalSalary += employees[i].salary;
-    }
-
-    return {
-        departmentName: departmentName,
-        numOfEmployee: employees.length,
-        totalSalary: totalSalary,
-        avgSalary: totalSalary / employees.length || 0
-    }
-}
-
-function getAllDepartmentData() {
-    const allDepartmentData = [];
-
-    const total = {
-        departmentName: 'Total',
-        numOfEmployee: 0,
-        totalSalary: 0,
-        avgSalary: 0
-    }
-
-    for (const department in employeesByDepartment) {
-        console.log(department);
-        const departmentData = getDepartmentData(department)
-        allDepartmentData.push(departmentData)
-
-        total.numOfEmployee += departmentData.numOfEmployee;
-        total.totalSalary += departmentData.totalSalary;
-    }
-
-    if (total.numOfEmployee > 0)
-        total.avgSalary = total.totalSalary / total.numOfEmployee
-
-    allDepartmentData.push(total)
-
-    return allDepartmentData;
-}
-
-function separateEmployeeByDepartment() {
-    const departmentEmployee = {
-        Administration: [],
-        Marketing: [],
-        Development: [],
-        Finance: [],
-    }
+function updateAllDepartmentData() {
 
     for (let i = 0; i < allEmployees.length; i++) {
         const employee = allEmployees[i];
-        departmentEmployee[employee.department]?.push(employee)
+
+        if (allDepartmentData[employee.department]) {
+            const dep = allDepartmentData[employee.department]
+            dep.numOfEmployee++;
+            dep.totalSalary += employee.salary;
+            dep.avgSalary = dep.totalSalary / dep.numOfEmployee
+        }
+
+        total.numOfEmployee++;
+        total.totalSalary += employee.salary;
     }
 
-    return departmentEmployee;
+    total.avgSalary = total.totalSalary / total.numOfEmployee || 0
+
 }
 
 function getEmployeesFromLocalStorage() {
@@ -109,3 +82,32 @@ function getEmployeesFromLocalStorage() {
         return []
     }
 }
+
+function initializeAllDepartment() {
+    const sharedData = {
+        numOfEmployee: 0,
+        totalSalary: 0,
+        avgSalary: 0,
+    }
+    return {
+        Administration: {
+            name: "Administration",
+            ...sharedData
+        },
+        Marketing: {
+            name: "Marketing",
+            ...sharedData
+
+        },
+        Development: {
+            name: "Development",
+            ...sharedData
+
+        },
+        Finance: {
+            name: "Finance",
+            ...sharedData
+        },
+    };
+}
+
